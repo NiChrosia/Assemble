@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "assemble",
+  "version": "${version}",
+
+  "name": "Assemble",
+  "description": "A dynamic recipe library to replace vanilla's.",
+  "authors": [
+    "NiChrosia"
+  ],
+  "contact": {
+    "homepage": "https://github.com/NiChrosia/Assemble",
+    "sources": "https://github.com/NiChrosia/Assemble"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/assemble/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "assemble.common.Assemble"
+      }
+    ]
+  },
+
+  "mixins": [
+    "assemble.mixins.json"
+  ],
+
+  "accessWidener": "assemble.accesswidener",
+
+  "depends": {
+    "fabricloader": ">=0.8.7",
+    "fabric": ">=0.42.0",
+    "fabric-language-kotlin": "*",
+    "minecraft": "1.18.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

@@ -102,7 +102,7 @@ fun DependencyHandler.fabricKotlin(version: String = extension("fabric_kotlin_ve
     return optionallyBundled("net.fabricmc:fabric-language-kotlin:$version", bundled)
 }
 
-fun DependencyHandler.arrp(version: String = extension("arrp_version"), bundled: Boolean = false): Dependency? {
+fun DependencyHandler.arrp(version: String = extension("arrp_version"), bundled: Boolean = true): Dependency? {
     return optionallyBundled("net.devtech:arrp:$version", bundled)
 }
 
@@ -147,6 +147,8 @@ base {
 repositories {
     jitpack()
     modmuss()
+    modrinth()
+    devan()
 }
 
 dependencies {
@@ -156,6 +158,9 @@ dependencies {
     loader()
     fabricApi()
     fabricKotlin()
+
+    arrp()
+    nucleus()
 }
 
 loom {

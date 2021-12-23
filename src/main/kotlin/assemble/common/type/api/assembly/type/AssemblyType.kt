@@ -5,9 +5,9 @@ import com.google.gson.JsonObject
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.Identifier
 
-abstract class AssemblyType<C, A : Assembly<C>>(val id: Identifier) {
+abstract class AssemblyType<C, out A : Assembly<C>>(val id: Identifier) {
     abstract fun deserialize(id: Identifier, json: JsonObject): A
 
-    abstract fun pack(packet: PacketByteBuf, assembly: A)
+    abstract fun pack(packet: PacketByteBuf, assembly: @UnsafeVariance A)
     abstract fun unpack(id: Identifier, packet: PacketByteBuf): A
 }

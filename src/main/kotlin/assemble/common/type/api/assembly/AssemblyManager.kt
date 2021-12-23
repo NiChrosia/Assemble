@@ -9,8 +9,8 @@ import net.minecraft.util.Identifier
 import java.io.InputStreamReader
 
 open class AssemblyManager(val id: Identifier) : SimpleSynchronousResourceReloadListener {
-    open val types = mutableMapOf<Identifier, AssemblyType<*, out Assembly<*>>>()
-    open val assemblies = mutableMapOf<AssemblyType<*, out Assembly<*>>, MutableList<Assembly<*>>>()
+    open val types = mutableMapOf<Identifier, AssemblyType<*, Assembly<*>>>()
+    open val assemblies = mutableMapOf<AssemblyType<*, Assembly<*>>, MutableList<Assembly<*>>>()
 
     override fun getFabricId(): Identifier {
         return id
@@ -31,16 +31,19 @@ open class AssemblyManager(val id: Identifier) : SimpleSynchronousResourceReload
             if (type != null) {
                 val assembly = type.deserialize(id, json)
 
-                assemblies.compute(type) { _, assemblies ->
-                    assemblies?.also { it.add(assembly) } ?: mutableListOf(assembly)
-                }
+                assemblies.add(type, assembly)
             }
         }
     }
 
     companion object {
+        const val path = "assemblies"
         val gson = GsonBuilder().setPrettyPrinting().create()
 
-        const val path = "assemblies"
+        fun <K, V> MutableMap<K, MutableList<V>>.add(key: K, value: V) {
+            compute(key) { _, list ->
+                list?.also { it.add(value) } ?: mutableListOf(value)
+            }
+        }
     }
 }

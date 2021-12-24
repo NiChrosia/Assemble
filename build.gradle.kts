@@ -175,6 +175,10 @@ loom {
     }
 }
 
+java {
+    withSourcesJar()
+}
+
 tasks {
     "compileJava"(JavaCompile::class) {
         options.encoding = "UTF-8"

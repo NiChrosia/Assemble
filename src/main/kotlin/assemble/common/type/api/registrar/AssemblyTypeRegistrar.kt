@@ -9,6 +9,7 @@ import nucleus.common.builtin.division.ModRoot
 import nucleus.common.member.Member
 import nucleus.common.registrar.Registrar
 
+/** A [Registrar] for types of assemblies. Intended to be used in a Nucleus category hierarchy. */
 open class AssemblyTypeRegistrar<R : ModRoot<R>>(root: R) : Registrar<Identifier, AssemblyType<*, Assembly<*>>, R>(root) {
     override fun register(key: Identifier, value: AssemblyType<*, Assembly<*>>): AssemblyType<*, Assembly<*>> {
         return super.register(key, value).also {

@@ -1,7 +1,7 @@
 package assemble.common.type.impl.assembly.fluid.slot
 
 import assemble.common.type.api.assembly.slot.OutputSlot
-import assemble.common.type.impl.storage.fluid.FluidInventory
+import assemble.common.type.api.storage.fluid.FluidInventory
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant
 
 open class FluidOutputSlot<C : FluidInventory>(val slot: Int, val result: FluidVariant, val amount: Long) : OutputSlot<C, FluidVariant>() {

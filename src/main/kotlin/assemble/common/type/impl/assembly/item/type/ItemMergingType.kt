@@ -11,11 +11,14 @@ import net.minecraft.inventory.Inventory
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.Identifier
 
-open class ItemMergingType<C : Inventory>(id: Identifier, val slots: List<Int>) : AssemblyType<C, ItemMergingAssembly<C>>(id) {
+open class ItemMergingType<C : Inventory> @JvmOverloads constructor(
+    id: Identifier,
+    val slots: List<Int> = listOf(0, 1, 2)
+) : AssemblyType<C, ItemMergingAssembly<C>>(id) {
     override fun deserialize(id: Identifier, json: JsonObject): ItemMergingAssembly<C> {
-        val first = json["first"].asIngredient
-        val second = json["second"].asIngredient
-        val result = json["result"].asItemStack
+        val first = json["first"].asJsonObject.asIngredient
+        val second = json["second"].asJsonObject.asIngredient
+        val result = json["result"].asJsonObject.asItemStack
 
         return ItemMergingAssembly(id, first, second, result, slots)
     }

@@ -8,19 +8,13 @@ import net.minecraft.item.ItemStack
 import net.minecraft.recipe.Ingredient
 import net.minecraft.util.Identifier
 
-open class ItemMergingAssembly<C : Inventory> @JvmOverloads constructor(
+open class ItemProcessingAssembly<C : Inventory> @JvmOverloads constructor(
     id: Identifier,
-    val first: Ingredient,
-    val second: Ingredient,
+    val ingredient: Ingredient,
     val result: ItemStack,
-    val slots: List<Int> = listOf(0, 1, 2)
+    val slots: List<Int> = listOf(0, 1)
 ) : Assembly<C>(
     id,
-    listOf(
-        ItemInputSlot(slots[0], first),
-        ItemInputSlot(slots[1], second)
-    ),
-    listOf(
-        ItemOutputSlot(slots[2], result)
-    )
+    listOf(ItemInputSlot(slots[0], ingredient)),
+    listOf(ItemOutputSlot(slots[1], result))
 )

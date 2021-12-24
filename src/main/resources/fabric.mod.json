@@ -22,6 +22,10 @@
       {
         "adapter": "kotlin",
         "value": "assemble.common.Assemble"
+      },
+      {
+        "adapter": "kotlin",
+        "value": "assemble.test.common.TestAssemble"
       }
     ]
   },

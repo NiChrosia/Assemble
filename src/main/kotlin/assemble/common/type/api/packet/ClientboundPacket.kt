@@ -21,6 +21,7 @@ abstract class ClientboundPacket {
         sender: PacketSender
     )
 
+    @JvmOverloads
     open fun send(
         handler: ServerPlayNetworkHandler,
         sender: PacketSender,

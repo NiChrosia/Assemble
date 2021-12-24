@@ -1,0 +1,12 @@
+{
+    "type": "assemble:item_processing",
+
+    "ingredient": {
+        "item": "minecraft:oak_log"
+    },
+
+    "result": {
+        "item": "minecraft:oak_planks",
+        "count": 1
+    }
+}

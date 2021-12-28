@@ -15,6 +15,12 @@ open class ItemOutputSlot<C : Inventory>(val slot: Int, val result: ItemStack) :
     }
 
     override fun craft(container: C) {
-        container.setStack(slot, result.copy())
+        val stack = container.getStack(slot)
+
+        if (stack.isEmpty) {
+            container.setStack(slot, result.copy())
+        } else {
+            stack.increment(1)
+        }
     }
 }

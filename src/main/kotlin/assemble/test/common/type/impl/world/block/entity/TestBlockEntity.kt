@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
 open class TestBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(TestAssemble.content.blockEntity.test, pos, state), Inventory by SimpleInventory(2) {
-    open val assemblyType = Assemble.content.assemblyType.itemProcessing
+    open val assemblyType = TestAssemble.content.assemblyType.itemProcessing
 
     override fun markDirty() {
         super.markDirty()

@@ -1,4 +1,4 @@
-package assemble.common.type.impl.assembly.item.slot
+package assemble.common.type.impl.assembly.slot.item
 
 import assemble.common.type.api.assembly.slot.InputSlot
 import net.minecraft.inventory.Inventory

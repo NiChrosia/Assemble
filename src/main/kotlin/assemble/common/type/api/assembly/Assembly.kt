@@ -2,9 +2,8 @@ package assemble.common.type.api.assembly
 
 import assemble.common.type.api.assembly.slot.InputSlot
 import assemble.common.type.api.assembly.slot.OutputSlot
-import assemble.common.type.api.assembly.type.AssemblyType
-import assemble.common.type.impl.assembly.fluid.slot.FluidOutputSlot
-import assemble.common.type.impl.assembly.item.slot.ItemInputSlot
+import assemble.common.type.impl.assembly.slot.fluid.FluidOutputSlot
+import assemble.common.type.impl.assembly.slot.item.ItemInputSlot
 import net.minecraft.util.Identifier
 
 /** The core of the crafting system. Inputs & outputs are registered via their respective properties, created using

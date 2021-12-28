@@ -2,9 +2,7 @@ package assemble.common.type.api.assembly
 
 import assemble.common.type.api.assembly.slot.InputSlot
 import assemble.common.type.api.assembly.slot.OutputSlot
-import assemble.common.type.api.storage.fluid.ProgressInventory
-import net.minecraft.inventory.SimpleInventory
-import net.minecraft.item.ItemStack
+import assemble.common.type.api.storage.ProgressInventory
 import net.minecraft.util.Identifier
 
 abstract class GradualAssembly<C : ProgressInventory>(

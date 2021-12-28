@@ -1,8 +1,8 @@
 package assemble.common.type.impl.assembly.item
 
 import assemble.common.type.api.assembly.Assembly
-import assemble.common.type.impl.assembly.item.slot.ItemInputSlot
-import assemble.common.type.impl.assembly.item.slot.ItemOutputSlot
+import assemble.common.type.impl.assembly.slot.item.ItemInputSlot
+import assemble.common.type.impl.assembly.slot.item.ItemOutputSlot
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.recipe.Ingredient

@@ -1,4 +1,4 @@
-package assemble.common.type.impl.assembly.item.type
+package assemble.common.type.impl.assembly.type.item
 
 import assemble.common.type.api.assembly.type.AssemblyType
 import assemble.common.type.dsl.io.item.asIngredient

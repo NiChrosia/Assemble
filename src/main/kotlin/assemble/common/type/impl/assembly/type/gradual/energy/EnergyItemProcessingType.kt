@@ -1,13 +1,13 @@
-package assemble.common.type.impl.assembly.energy.type
+package assemble.common.type.impl.assembly.type.gradual.energy
 
 import assemble.common.type.api.assembly.type.AssemblyType
-import assemble.common.type.api.storage.fluid.EnergyInventory
-import assemble.common.type.api.storage.fluid.ProgressInventory
+import assemble.common.type.api.storage.EnergyInventory
+import assemble.common.type.api.storage.ProgressInventory
 import assemble.common.type.dsl.io.item.asIngredient
 import assemble.common.type.dsl.io.item.asItemStack
 import assemble.common.type.dsl.io.item.readIngredient
 import assemble.common.type.dsl.io.item.writeIngredient
-import assemble.common.type.impl.assembly.energy.EnergyItemProcessingAssembly
+import assemble.common.type.impl.assembly.gradual.energy.EnergyItemProcessingAssembly
 import com.google.gson.JsonObject
 import net.minecraft.inventory.Inventory
 import net.minecraft.network.PacketByteBuf

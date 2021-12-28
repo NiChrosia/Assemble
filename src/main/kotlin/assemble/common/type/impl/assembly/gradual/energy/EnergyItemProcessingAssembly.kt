@@ -1,10 +1,9 @@
-package assemble.common.type.impl.assembly.energy
+package assemble.common.type.impl.assembly.gradual.energy
 
-import assemble.common.type.api.storage.fluid.EnergyInventory
-import assemble.common.type.api.storage.fluid.ProgressInventory
-import assemble.common.type.impl.assembly.EnergyGradualAssembly
-import assemble.common.type.impl.assembly.item.slot.ItemInputSlot
-import assemble.common.type.impl.assembly.item.slot.ItemOutputSlot
+import assemble.common.type.api.storage.EnergyInventory
+import assemble.common.type.api.storage.ProgressInventory
+import assemble.common.type.impl.assembly.slot.item.ItemInputSlot
+import assemble.common.type.impl.assembly.slot.item.ItemOutputSlot
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.recipe.Ingredient

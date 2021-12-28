@@ -1,14 +1,14 @@
-package assemble.common.type.impl.assembly.fluid.type
+package assemble.common.type.impl.assembly.type.fluid
 
 import assemble.common.type.api.assembly.type.AssemblyType
 import assemble.common.type.dsl.io.fluid.*
 import assemble.common.type.impl.assembly.fluid.FluidMixingAssembly
-import assemble.common.type.api.storage.fluid.FluidInventory
+import assemble.common.type.api.storage.fluid.MultiFluidInventory
 import com.google.gson.JsonObject
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.Identifier
 
-open class FluidMixingType<C : FluidInventory> @JvmOverloads constructor(
+open class FluidMixingType<C : MultiFluidInventory> @JvmOverloads constructor(
     id: Identifier,
     val slots: List<Int> = listOf(0, 1, 2)
 ) : AssemblyType<C, FluidMixingAssembly<C>>(id) {

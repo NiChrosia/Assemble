@@ -1,4 +1,4 @@
-package assemble.common.type.impl.assembly.mixed.type
+package assemble.common.type.impl.assembly.type.mixed
 
 import assemble.common.type.api.assembly.type.AssemblyType
 import assemble.common.type.dsl.io.fluid.*
@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier
 
 open class ItemInfusionType<C> @JvmOverloads constructor(
     id: Identifier,
-    val slots: List<Int> = listOf(0, 1, 2)
+    val slots: List<Int> = listOf(0, 1)
 ) : AssemblyType<C, ItemInfusionAssembly<C>>(id) where C : Inventory, C : FluidInventory {
     override fun deserialize(id: Identifier, json: JsonObject): ItemInfusionAssembly<C> {
         val item = json["item"].asJsonObject.asIngredient

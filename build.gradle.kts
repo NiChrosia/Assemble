@@ -161,6 +161,8 @@ dependencies {
 
     arrp()
     nucleus()
+
+    rebornEnergy()
 }
 
 loom {

@@ -1,10 +1,10 @@
 package assemble.common.type.dsl.io.fluid
 
 import assemble.common.type.dsl.io.asEntry
+import assemble.common.type.impl.stack.FluidStack
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant
-import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
 val JsonElement.asFluid: FluidVariant
@@ -12,10 +12,10 @@ val JsonElement.asFluid: FluidVariant
         return FluidVariant.of(asEntry(Registry.FLUID))
     }
 
-val JsonObject.asFluidStack: Pair<FluidVariant, Long>
+val JsonObject.asFluidStack: FluidStack
     get() {
-        val fluid = this["fluid"].asFluid
+        val type = this["fluid"].asFluid
         val amount = this["amount"].asLong
 
-        return fluid to amount
+        return FluidStack(type, amount)
     }

@@ -1,9 +1,12 @@
 package assemble.common.type.impl.assembly.gradual.energy
 
+import assemble.common.type.api.assembly.GradualAssembly
 import assemble.common.type.api.storage.EnergyInventory
 import assemble.common.type.api.storage.ProgressInventory
-import assemble.common.type.impl.assembly.slot.item.ItemInputSlot
-import assemble.common.type.impl.assembly.slot.item.ItemOutputSlot
+import assemble.common.type.impl.assembly.slot.gradual.GradualEnergyInput
+import assemble.common.type.impl.assembly.slot.item.ItemInput
+import assemble.common.type.impl.assembly.slot.item.ItemOutput
+import assemble.common.type.impl.stack.IngredientStack
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.recipe.Ingredient
@@ -11,17 +14,20 @@ import net.minecraft.util.Identifier
 
 open class EnergyItemProcessingAssembly<C> @JvmOverloads constructor(
     id: Identifier,
-    val ingredient: Ingredient,
+    val ingredient: IngredientStack,
+
     val result: ItemStack,
     val slots: List<Int> = listOf(0, 1),
+    val consumption: Long,
     speed: Long,
     end: Long,
-    consumption: Long
-) : EnergyGradualAssembly<C>(
+) : GradualAssembly<C>(
     id,
-    listOf(ItemInputSlot(slots[0], ingredient)),
-    listOf(ItemOutputSlot(slots[1], result)),
+    listOf(ItemInput(slots[0], ingredient)),
+    listOf(ItemOutput(slots[1], result)),
+
+    listOf(GradualEnergyInput(consumption)),
+    listOf(),
     speed,
     end,
-    consumption
 ) where C : Inventory, C : EnergyInventory, C : ProgressInventory

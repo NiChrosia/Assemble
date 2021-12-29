@@ -1,10 +1,7 @@
 package assemble.common.type.impl.assembly.type.item
 
 import assemble.common.type.api.assembly.type.AssemblyType
-import assemble.common.type.dsl.io.item.asIngredient
-import assemble.common.type.dsl.io.item.asItemStack
-import assemble.common.type.dsl.io.item.readIngredient
-import assemble.common.type.dsl.io.item.writeIngredient
+import assemble.common.type.dsl.io.item.*
 import assemble.common.type.impl.assembly.item.ItemProcessingAssembly
 import com.google.gson.JsonObject
 import net.minecraft.inventory.Inventory
@@ -16,19 +13,19 @@ open class ItemProcessingType<C : Inventory> @JvmOverloads constructor(
     val slots: List<Int> = listOf(0, 1)
 ) : AssemblyType<C, ItemProcessingAssembly<C>>(id) {
     override fun deserialize(id: Identifier, json: JsonObject): ItemProcessingAssembly<C> {
-        val ingredient = json["ingredient"].asJsonObject.asIngredient
+        val ingredient = json["ingredient"].asJsonObject.asIngredientStack
         val result = json["result"].asJsonObject.asItemStack
 
         return ItemProcessingAssembly(id, ingredient, result, slots)
     }
 
     override fun pack(packet: PacketByteBuf, assembly: ItemProcessingAssembly<C>) {
-        packet.writeIngredient(assembly.ingredient)
+        packet.writeIngredientStack(assembly.ingredient)
         packet.writeItemStack(assembly.result)
     }
 
     override fun unpack(id: Identifier, packet: PacketByteBuf): ItemProcessingAssembly<C> {
-        val ingredient = packet.readIngredient()
+        val ingredient = packet.readIngredientStack()
         val result = packet.readItemStack()
 
         return ItemProcessingAssembly(id, ingredient, result, slots)

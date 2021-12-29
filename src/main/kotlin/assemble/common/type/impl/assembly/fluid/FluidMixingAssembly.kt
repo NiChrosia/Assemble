@@ -1,32 +1,28 @@
 package assemble.common.type.impl.assembly.fluid
 
 import assemble.common.type.api.assembly.Assembly
-import assemble.common.type.impl.assembly.slot.fluid.FluidInputSlot
-import assemble.common.type.impl.assembly.slot.fluid.FluidOutputSlot
-import assemble.common.type.api.storage.fluid.MultiFluidInventory
+import assemble.common.type.impl.assembly.slot.fluid.FluidInput
+import assemble.common.type.impl.assembly.slot.fluid.FluidOutput
+import assemble.common.type.api.storage.fluid.FluidInventory
+import assemble.common.type.impl.stack.FluidStack
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant
 import net.minecraft.util.Identifier
 
-open class FluidMixingAssembly<C : MultiFluidInventory> @JvmOverloads constructor(
+open class FluidMixingAssembly<C : FluidInventory> @JvmOverloads constructor(
     id: Identifier,
 
-    val first: FluidVariant,
-    val firstAmount: Long,
-
-    val second: FluidVariant,
-    val secondAmount: Long,
-
-    val result: FluidVariant,
-    val resultAmount: Long,
+    val first: FluidStack,
+    val second: FluidStack,
+    val result: FluidStack,
 
     val slots: List<Int> = listOf(0, 1, 2)
 ) : Assembly<C>(
     id,
     listOf(
-        FluidInputSlot(slots[0], first, firstAmount),
-        FluidInputSlot(slots[1], second, secondAmount)
+        FluidInput(slots[0], first),
+        FluidInput(slots[1], second)
     ),
     listOf(
-        FluidOutputSlot(slots[2], result, resultAmount)
+        FluidOutput(slots[2], result)
     )
 )

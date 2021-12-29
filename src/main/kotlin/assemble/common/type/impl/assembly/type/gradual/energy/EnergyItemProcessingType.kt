@@ -3,10 +3,7 @@ package assemble.common.type.impl.assembly.type.gradual.energy
 import assemble.common.type.api.assembly.type.AssemblyType
 import assemble.common.type.api.storage.EnergyInventory
 import assemble.common.type.api.storage.ProgressInventory
-import assemble.common.type.dsl.io.item.asIngredient
-import assemble.common.type.dsl.io.item.asItemStack
-import assemble.common.type.dsl.io.item.readIngredient
-import assemble.common.type.dsl.io.item.writeIngredient
+import assemble.common.type.dsl.io.item.*
 import assemble.common.type.impl.assembly.gradual.energy.EnergyItemProcessingAssembly
 import com.google.gson.JsonObject
 import net.minecraft.inventory.Inventory
@@ -24,19 +21,19 @@ open class EnergyItemProcessingType<C>(
     val consumption: Long
 ) : AssemblyType<C, EnergyItemProcessingAssembly<C>>(id) where C : Inventory, C : EnergyInventory, C : ProgressInventory {
     override fun deserialize(id: Identifier, json: JsonObject): EnergyItemProcessingAssembly<C> {
-        val ingredient = json["ingredient"].asJsonObject.asIngredient
+        val ingredient = json["ingredient"].asJsonObject.asIngredientStack
         val result = json["result"].asJsonObject.asItemStack
 
         return EnergyItemProcessingAssembly(id, ingredient, result, slots, speed, end, consumption)
     }
 
     override fun pack(packet: PacketByteBuf, assembly: EnergyItemProcessingAssembly<C>) {
-        packet.writeIngredient(assembly.ingredient)
+        packet.writeIngredientStack(assembly.ingredient)
         packet.writeItemStack(assembly.result)
     }
 
     override fun unpack(id: Identifier, packet: PacketByteBuf): EnergyItemProcessingAssembly<C> {
-        val ingredient = packet.readIngredient()
+        val ingredient = packet.readIngredientStack()
         val result = packet.readItemStack()
 
         return EnergyItemProcessingAssembly(id, ingredient, result, slots, speed, end, consumption)

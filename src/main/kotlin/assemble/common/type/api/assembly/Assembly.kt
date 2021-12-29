@@ -2,12 +2,12 @@ package assemble.common.type.api.assembly
 
 import assemble.common.type.api.assembly.slot.InputSlot
 import assemble.common.type.api.assembly.slot.OutputSlot
-import assemble.common.type.impl.assembly.slot.fluid.FluidOutputSlot
-import assemble.common.type.impl.assembly.slot.item.ItemInputSlot
+import assemble.common.type.impl.assembly.slot.fluid.FluidOutput
+import assemble.common.type.impl.assembly.slot.item.ItemInput
 import net.minecraft.util.Identifier
 
 /** The core of the crafting system. Inputs & outputs are registered via their respective properties, created using
- * slots like [ItemInputSlot], [FluidOutputSlot], etc. */
+ * slots like [ItemInput], [FluidOutput], etc. */
 abstract class Assembly<C>(
     /** The ID of the assembly. Used to distinguish assemblies of the same type. */
     val id: Identifier,
@@ -24,7 +24,7 @@ abstract class Assembly<C>(
     }
 
     open fun craft(container: C) {
-        inputs.forEach { it.craft(container) }
-        outputs.forEach { it.craft(container) }
+        inputs.forEach { it.consume(container) }
+        outputs.forEach { it.produce(container) }
     }
 }

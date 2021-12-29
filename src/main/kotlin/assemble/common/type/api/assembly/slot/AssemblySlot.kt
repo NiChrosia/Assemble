@@ -5,6 +5,11 @@ abstract class AssemblySlot<C, T> {
     /** Whether this slot matches the given [container]. Used to check for valid types, full slots, enough content, and various other things. */
     abstract fun matches(container: C): Boolean
 
-    /** Craft using the given [container]. Used to either consume ingredients or produce results. */
-    abstract fun craft(container: C)
+    open fun checkInsertion(amount: Long, intended: Long) {
+        if (amount < intended) throw IllegalStateException("Inserted less than expected despite matching container.")
+    }
+
+    open fun checkExtraction(amount: Long, intended: Long) {
+        if (amount < intended) throw IllegalStateException("Extracted less than expected despite matching container.")
+    }
 }

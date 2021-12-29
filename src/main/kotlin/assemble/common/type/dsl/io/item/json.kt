@@ -12,7 +12,7 @@ val JsonObject.asIngredient: Ingredient
 val JsonObject.asIngredientStack: IngredientStack
     get() {
         val type = asIngredient
-        val consumption = this["consumption"].asInt
+        val consumption = this["consumption"].asLong
 
         return IngredientStack(type, consumption)
     }

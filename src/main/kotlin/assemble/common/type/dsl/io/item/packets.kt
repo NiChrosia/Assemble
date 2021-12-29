@@ -10,7 +10,7 @@ fun PacketByteBuf.readIngredient(): Ingredient {
 
 fun PacketByteBuf.readIngredientStack(): IngredientStack {
     val type = readIngredient()
-    val consumption = readInt()
+    val consumption = readLong()
 
     return IngredientStack(type, consumption)
 }
@@ -21,5 +21,5 @@ fun PacketByteBuf.writeIngredient(ingredient: Ingredient) {
 
 fun PacketByteBuf.writeIngredientStack(stack: IngredientStack) {
     writeIngredient(stack.type)
-    writeInt(stack.consumption)
+    writeLong(stack.amount)
 }

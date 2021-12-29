@@ -10,12 +10,12 @@ open class ItemInput<C : Inventory>(val slot: Int, val stack: IngredientStack) :
         val slotStack = container.getStack(slot)
 
         val matches = stack.type.test(slotStack)
-        val enoughItems = slotStack.count >= stack.consumption
+        val enoughItems = slotStack.count >= stack.amount
 
         return matches && enoughItems
     }
 
     override fun consume(container: C) {
-        container.getStack(slot).decrement(stack.consumption)
+        container.getStack(slot).decrement(stack.amount.toInt())
     }
 }

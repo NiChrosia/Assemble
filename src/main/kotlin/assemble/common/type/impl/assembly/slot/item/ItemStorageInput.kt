@@ -12,7 +12,7 @@ open class ItemStorageInput<C : ItemInventory>(val slot: Int, val stack: Ingredi
 
         val supportsExtraction = storage.supportsExtraction()
         val matches = stack.type.test(storage.resource.toStack())
-        val enoughItems = storage.amount >= stack.consumption
+        val enoughItems = storage.amount >= stack.amount
 
         return supportsExtraction && matches && enoughItems
     }
@@ -21,8 +21,8 @@ open class ItemStorageInput<C : ItemInventory>(val slot: Int, val stack: Ingredi
         val storage = container.itemStorage.parts[slot]
         val transaction = Transaction.openOuter()
 
-        storage.extract(storage.resource, stack.consumption.toLong(), transaction).also {
-            checkExtraction(it, stack.consumption.toLong())
+        storage.extract(storage.resource, stack.amount, transaction).also {
+            checkExtraction(it, stack.amount)
         }
 
         transaction.commit()

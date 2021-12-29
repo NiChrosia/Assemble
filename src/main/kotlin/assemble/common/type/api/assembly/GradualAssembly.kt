@@ -18,6 +18,15 @@ abstract class GradualAssembly<C : ProgressInventory>(
     val speed: Long,
     val end: Long
 ) : Assembly<C>(id, inputs, outputs) {
+    override fun matches(container: C): Boolean {
+        return super.matches(container).let { defaults ->
+            val gradualInputs = gradualInputs.all { it.matches(container) }
+            val gradualOutputs = gradualOutputs.all { it.matches(container) }
+
+            defaults && gradualInputs && gradualOutputs
+        }
+    }
+
     open fun tick(container: C) {
         if (matches(container)) {
             container.progress += speed

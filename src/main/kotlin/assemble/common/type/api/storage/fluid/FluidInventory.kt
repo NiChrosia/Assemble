@@ -5,5 +5,5 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage
 
 interface FluidInventory {
-    val fluidStorage: CombinedStorage<out FluidVariant, out SingleSlotStorage<out FluidVariant>>
+    val fluidStorage: CombinedStorage<FluidVariant, out SingleSlotStorage<FluidVariant>>
 }

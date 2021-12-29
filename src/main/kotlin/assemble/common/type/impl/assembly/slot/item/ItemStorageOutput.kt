@@ -8,20 +8,20 @@ import net.minecraft.item.ItemStack
 
 open class ItemStorageOutput<C : ItemInventory>(val slot: Int, val result: ItemStack) : OutputSlot<C, ItemStack>() {
     override fun matches(container: C): Boolean {
-        val storage = container.itemStorage.parts[slot]
+        val part = container.itemStorage.parts[slot]
 
-        val supportsInsertion = storage.supportsInsertion()
-        val notFull = storage.amount < storage.capacity - result.count
-        val correctType = storage.resource.item == result.item
+        val supportsInsertion = part.supportsInsertion()
+        val notFull = part.amount < part.capacity - result.count
+        val correctType = part.isResourceBlank || part.resource.item == result.item
 
         return supportsInsertion && notFull && correctType
     }
 
     override fun produce(container: C) {
-        val storage = container.itemStorage.parts[slot]
+        val part = container.itemStorage.parts[slot]
         val transaction = Transaction.openOuter()
 
-        storage.insert(ItemVariant.of(result), result.count.toLong(), transaction).also {
+        part.insert(ItemVariant.of(result), result.count.toLong(), transaction).also {
             checkInsertion(it, result.count.toLong())
         }
 

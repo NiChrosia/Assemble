@@ -1,6 +1,6 @@
 package assemble.test.common.type.impl.world.block
 
-import assemble.test.common.TestAssemble
+import assemble.test.common.AssembleTest
 import assemble.test.common.type.impl.world.block.entity.TestBlockEntity
 import net.minecraft.block.BlockState
 import net.minecraft.block.BlockWithEntity
@@ -20,7 +20,7 @@ open class TestBlock(settings: Settings) : BlockWithEntity(settings) {
         state: BlockState,
         type: BlockEntityType<T>
     ): BlockEntityTicker<T>? {
-        return checkType(type, TestAssemble.content.blockEntity.test) { tickerWorld, tickerPos, tickerState, entity ->
+        return checkType(type, AssembleTest.content.blockEntity.test) { tickerWorld, tickerPos, tickerState, entity ->
             entity.tick(tickerWorld, tickerPos, tickerState)
         }
     }

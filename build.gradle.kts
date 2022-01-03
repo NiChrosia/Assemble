@@ -145,6 +145,8 @@ base {
 }
 
 repositories {
+    mavenCentral()
+
     jitpack()
     modmuss()
     modrinth()

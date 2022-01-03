@@ -25,7 +25,7 @@
       },
       {
         "adapter": "kotlin",
-        "value": "assemble.test.common.TestAssemble"
+        "value": "assemble.test.common.AssembleTest"
       }
     ]
   },
@@ -40,9 +40,9 @@
     "fabricloader": ">=0.8.7",
     "fabric": ">=0.42.0",
     "fabric-language-kotlin": "*",
-    "minecraft": "1.18.x",
+    "minecraft": ">=1.18",
 
-    "nucleus": ">=0.2.3"
+    "nucleus": ">=0.3"
   },
   "suggests": {
     "flamingo": "*"

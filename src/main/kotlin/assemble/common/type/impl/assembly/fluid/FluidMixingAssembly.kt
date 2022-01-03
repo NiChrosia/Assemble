@@ -3,12 +3,11 @@ package assemble.common.type.impl.assembly.fluid
 import assemble.common.type.api.assembly.Assembly
 import assemble.common.type.impl.assembly.slot.fluid.FluidInput
 import assemble.common.type.impl.assembly.slot.fluid.FluidOutput
-import assemble.common.type.api.storage.fluid.FluidInventory
+import assemble.common.type.api.storage.fluid.FluidStorageInventory
 import assemble.common.type.impl.stack.FluidStack
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant
 import net.minecraft.util.Identifier
 
-open class FluidMixingAssembly<C : FluidInventory> @JvmOverloads constructor(
+open class FluidMixingAssembly<C : FluidStorageInventory> @JvmOverloads constructor(
     id: Identifier,
 
     val first: FluidStack,

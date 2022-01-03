@@ -1,5 +1,7 @@
 package assemble.common.type.impl.assembly.type.item
 
+import assemble.common.Assemble
+import assemble.common.type.api.assembly.serializer.SlotSerializer
 import assemble.common.type.api.assembly.type.AssemblyType
 import assemble.common.type.dsl.io.item.*
 import assemble.common.type.impl.assembly.item.ItemProcessingAssembly
@@ -12,22 +14,19 @@ open class ItemProcessingType<C : Inventory> @JvmOverloads constructor(
     id: Identifier,
     val slots: List<Int> = listOf(0, 1)
 ) : AssemblyType<C, ItemProcessingAssembly<C>>(id) {
-    override fun deserialize(id: Identifier, json: JsonObject): ItemProcessingAssembly<C> {
-        val ingredient = json["ingredient"].asJsonObject.asIngredientStack
-        val result = json["result"].asJsonObject.asItemStack
+    val ingredient = SlotSerializer(Assemble.content.slotSerializer.ingredientStack, "ingredient")
+    val result = SlotSerializer(Assemble.content.slotSerializer.itemStack, "result")
 
-        return ItemProcessingAssembly(id, ingredient, result, slots)
+    override fun read(id: Identifier, json: JsonObject): ItemProcessingAssembly<C> {
+        return ItemProcessingAssembly(id, ingredient(json), result(json), slots)
     }
 
-    override fun pack(packet: PacketByteBuf, assembly: ItemProcessingAssembly<C>) {
-        packet.writeIngredientStack(assembly.ingredient)
-        packet.writeItemStack(assembly.result)
+    override fun pack(buffer: PacketByteBuf, assembly: ItemProcessingAssembly<C>) {
+        ingredient(buffer, assembly.ingredient)
+        result(buffer, assembly.result)
     }
 
-    override fun unpack(id: Identifier, packet: PacketByteBuf): ItemProcessingAssembly<C> {
-        val ingredient = packet.readIngredientStack()
-        val result = packet.readItemStack()
-
-        return ItemProcessingAssembly(id, ingredient, result, slots)
+    override fun unpack(id: Identifier, buffer: PacketByteBuf): ItemProcessingAssembly<C> {
+        return ItemProcessingAssembly(id, ingredient(buffer), result(buffer), slots)
     }
 }

@@ -1,5 +1,6 @@
 package assemble.common
 
+import assemble.common.content.AssembleContent
 import assemble.common.type.api.assembly.Assembly
 import assemble.common.type.api.assembly.AssemblyManager
 import assemble.common.type.api.assembly.type.AssemblyType
@@ -9,11 +10,17 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper
 import net.minecraft.resource.ResourceType
 import net.minecraft.util.Identifier
+import nucleus.common.builtin.division.ModRoot
+import nucleus.common.builtin.division.content.ContentCategory
 
-object Assemble : ModInitializer {
+object Assemble : ModRoot<Assemble>("assemble"), ModInitializer {
+    override val content = AssembleContent(this)
+
     val manager = AssemblyManager(Identifier("assemble", "assembly_manager"))
 
     override fun onInitialize() {
+        launch(this)
+
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(manager)
 
         ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->

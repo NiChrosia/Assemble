@@ -1,5 +1,7 @@
 package assemble.common.type.impl.assembly.type.mixed
 
+import assemble.common.Assemble
+import assemble.common.type.api.assembly.serializer.SlotSerializer
 import assemble.common.type.api.assembly.type.AssemblyType
 import assemble.common.type.dsl.io.fluid.*
 import assemble.common.type.impl.assembly.mixed.ItemInfusionAssembly
@@ -14,25 +16,21 @@ open class ItemInfusionType<C> @JvmOverloads constructor(
     id: Identifier,
     val slots: List<Int> = listOf(0, 1)
 ) : AssemblyType<C, ItemInfusionAssembly<C>>(id) where C : Inventory, C : SingleFluidInventory {
-    override fun deserialize(id: Identifier, json: JsonObject): ItemInfusionAssembly<C> {
-        val item = json["item"].asJsonObject.asIngredientStack
-        val fluid = json["fluid"].asJsonObject.asFluidStack
-        val result = json["result"].asJsonObject.asItemStack
+    val item = SlotSerializer(Assemble.content.slotSerializer.ingredientStack, "item")
+    val fluid = SlotSerializer(Assemble.content.slotSerializer.fluidStack, "fluid")
+    val result = SlotSerializer(Assemble.content.slotSerializer.itemStack, "result")
 
-        return ItemInfusionAssembly(id, item, fluid, result, slots)
+    override fun read(id: Identifier, json: JsonObject): ItemInfusionAssembly<C> {
+        return ItemInfusionAssembly(id, item(json), fluid(json), result(json), slots)
     }
 
-    override fun pack(packet: PacketByteBuf, assembly: ItemInfusionAssembly<C>) {
-        packet.writeIngredientStack(assembly.item)
-        packet.writeFluidStack(assembly.fluid)
-        packet.writeItemStack(assembly.result)
+    override fun pack(buffer: PacketByteBuf, assembly: ItemInfusionAssembly<C>) {
+        item(buffer, assembly.item)
+        fluid(buffer, assembly.fluid)
+        result(buffer, assembly.result)
     }
 
-    override fun unpack(id: Identifier, packet: PacketByteBuf): ItemInfusionAssembly<C> {
-        val item = packet.readIngredientStack()
-        val fluid = packet.readFluidStack()
-        val result = packet.readItemStack()
-
-        return ItemInfusionAssembly(id, item, fluid, result, slots)
+    override fun unpack(id: Identifier, buffer: PacketByteBuf): ItemInfusionAssembly<C> {
+        return ItemInfusionAssembly(id, item(buffer), fluid(buffer), result(buffer), slots)
     }
 }

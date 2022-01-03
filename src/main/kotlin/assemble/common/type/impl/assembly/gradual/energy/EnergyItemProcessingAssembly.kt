@@ -1,15 +1,14 @@
 package assemble.common.type.impl.assembly.gradual.energy
 
 import assemble.common.type.api.assembly.GradualAssembly
-import assemble.common.type.api.storage.EnergyInventory
-import assemble.common.type.api.storage.ProgressInventory
+import assemble.common.type.api.storage.EnergyStorageInventory
+import assemble.common.type.api.storage.Progressable
 import assemble.common.type.impl.assembly.slot.gradual.GradualEnergyInput
 import assemble.common.type.impl.assembly.slot.item.ItemInput
 import assemble.common.type.impl.assembly.slot.item.ItemOutput
 import assemble.common.type.impl.stack.IngredientStack
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
-import net.minecraft.recipe.Ingredient
 import net.minecraft.util.Identifier
 
 open class EnergyItemProcessingAssembly<C> @JvmOverloads constructor(
@@ -30,4 +29,4 @@ open class EnergyItemProcessingAssembly<C> @JvmOverloads constructor(
     listOf(),
     speed,
     end,
-) where C : Inventory, C : EnergyInventory, C : ProgressInventory
+) where C : Inventory, C : EnergyStorageInventory, C : Progressable

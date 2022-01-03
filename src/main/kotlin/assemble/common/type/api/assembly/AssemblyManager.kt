@@ -29,7 +29,7 @@ open class AssemblyManager(val id: Identifier) : SimpleSynchronousResourceReload
             val type = types[typeId]
 
             if (type != null) {
-                val assembly = type.deserialize(id, json)
+                val assembly = type.read(id, json)
 
                 assemblies.add(type, assembly)
             }

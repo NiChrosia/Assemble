@@ -1,5 +1,5 @@
 package assemble.common.type.api.storage
 
-interface ProgressInventory {
+interface Progressable {
     var progress: Long
 }

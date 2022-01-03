@@ -1,12 +1,12 @@
 package assemble.common.type.impl.assembly.slot.item
 
 import assemble.common.type.api.assembly.slot.InputSlot
-import assemble.common.type.api.storage.ItemInventory
+import assemble.common.type.api.storage.ItemStorageInventory
 import assemble.common.type.impl.stack.IngredientStack
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction
 import net.minecraft.recipe.Ingredient
 
-open class ItemStorageInput<C : ItemInventory>(val slot: Int, val stack: IngredientStack) : InputSlot<C, Ingredient>() {
+open class ItemStorageInput<C : ItemStorageInventory>(val slot: Int, val stack: IngredientStack) : InputSlot<C, Ingredient>() {
     override fun matches(container: C): Boolean {
         val part = container.itemStorage.parts[slot]
 

@@ -1,12 +1,12 @@
 package assemble.common.type.impl.assembly.slot.item
 
 import assemble.common.type.api.assembly.slot.OutputSlot
-import assemble.common.type.api.storage.ItemInventory
+import assemble.common.type.api.storage.ItemStorageInventory
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction
 import net.minecraft.item.ItemStack
 
-open class ItemStorageOutput<C : ItemInventory>(val slot: Int, val result: ItemStack) : OutputSlot<C, ItemStack>() {
+open class ItemStorageOutput<C : ItemStorageInventory>(val slot: Int, val result: ItemStack) : OutputSlot<C, ItemStack>() {
     override fun matches(container: C): Boolean {
         val part = container.itemStorage.parts[slot]
 

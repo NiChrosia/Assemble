@@ -1,12 +1,12 @@
 package assemble.common.type.impl.assembly.slot.fluid
 
 import assemble.common.type.api.assembly.slot.InputSlot
-import assemble.common.type.api.storage.fluid.FluidInventory
+import assemble.common.type.api.storage.fluid.FluidStorageInventory
 import assemble.common.type.impl.stack.FluidStack
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction
 
-open class FluidInput<C : FluidInventory>(val slot: Int, val stack: FluidStack) : InputSlot<C, FluidVariant>() {
+open class FluidInput<C : FluidStorageInventory>(val slot: Int, val stack: FluidStack) : InputSlot<C, FluidVariant>() {
     override fun matches(container: C): Boolean {
         val part = container.fluidStorage.parts[slot]
 

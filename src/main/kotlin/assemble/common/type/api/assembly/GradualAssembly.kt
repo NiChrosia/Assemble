@@ -4,10 +4,10 @@ import assemble.common.type.api.assembly.slot.InputSlot
 import assemble.common.type.api.assembly.slot.OutputSlot
 import assemble.common.type.api.assembly.slot.gradual.GradualInputSlot
 import assemble.common.type.api.assembly.slot.gradual.GradualOutputSlot
-import assemble.common.type.api.storage.ProgressInventory
+import assemble.common.type.api.storage.Progressable
 import net.minecraft.util.Identifier
 
-abstract class GradualAssembly<C : ProgressInventory>(
+abstract class GradualAssembly<C : Progressable>(
     id: Identifier,
     inputs: List<InputSlot<C, *>>,
     outputs: List<OutputSlot<C, *>>,

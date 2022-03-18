@@ -13,7 +13,7 @@ repositories {
         setUrl("https://api.modrinth.com/maven/")
         
         content {
-            includeGroup("maven,modrinth")
+            includeGroup("maven.modrinth")
         }
     }
 }

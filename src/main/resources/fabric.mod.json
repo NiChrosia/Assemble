@@ -21,11 +21,7 @@
     "main": [
       {
         "adapter": "kotlin",
-        "value": "assemble.common.Assemble"
-      },
-      {
-        "adapter": "kotlin",
-        "value": "assemble.test.common.AssembleTest"
+        "value": "assemble.Assemble"
       }
     ]
   },

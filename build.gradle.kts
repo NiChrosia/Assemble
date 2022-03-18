@@ -1,213 +1,122 @@
-@file:Suppress("unused")
+import java.net.URI
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-// utilities
-
-fun extension(name: String): String {
-    return project.ext[name] as String
+plugins {
+    kotlin("jvm") version "1.5.10"
+    id("fabric-loom")
+    `maven-publish`
+    java
 }
 
-fun DependencyHandler.bundledMod(notation: Any, impl: (Any) -> Dependency? = this::modImplementation): Dependency? {
-    return include(notation)?.let(impl)
-}
+group = property("maven_group")!!
+version = property("mod_version")!!
 
-fun DependencyHandler.optionallyBundled(notation: Any, bundled: Boolean, impl: (Any) -> Dependency? = this::modImplementation): Dependency? {
-    return if (bundled) bundledMod(notation, impl) else modImplementation(notation)
-}
-
-// libraries
-
-// repositories
-
-fun RepositoryHandler.jitpack() {
-    maven {
-        name = "Jitpack"
-        setUrl("https://jitpack.io")
-    }
-}
-
-fun RepositoryHandler.modmuss() {
-    maven {
-        name = "Modmuss50"
-        setUrl("https://maven.modmuss50.me/")
-        content {
-            includeGroup("RebornCore")
-            includeGroup("TechReborn")
-            includeGroup("teamreborn")
-        }
-    }
-}
-
-fun RepositoryHandler.buildcraft() {
-    maven {
-        name = "BuildCraft"
-        setUrl("https://mod-buildcraft.com/maven")
-    }
-}
-
-fun RepositoryHandler.patchouli() {
-    maven {
-        name = "Patchouli"
-        setUrl("https://maven.blamejared.com")
-        content {
-            includeGroup("vazkii.patchouli")
-        }
-    }
-}
-
-fun RepositoryHandler.devan() {
-    maven {
-        name = "Devan"
-        setUrl("https://storage.googleapis.com/devan-maven/")
-    }
-}
-
-fun RepositoryHandler.cottonMc() {
-    maven {
-        name = "CottonMC"
-        setUrl("https://server.bbkr.space/artifactory/libs-release")
-    }
-}
-
-fun RepositoryHandler.modrinth() {
+repositories {
+    // Add repositories to retrieve artifacts from in here.
+    // You should only use this when depending on other mods because
+    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+    // for more information about repositories.
     maven {
         name = "Modrinth"
-        setUrl("https://api.modrinth.com/maven")
+        url = URI("https://api.modrinth.com/maven/")
+
         content {
             includeGroup("maven.modrinth")
         }
     }
 }
 
-// dependencies
+allprojects {
+    apply(plugin = "kotlin")
+    apply(plugin = "fabric-loom")
+    apply(plugin = "maven-publish")
+    apply(plugin = "java")
 
-fun DependencyHandlerScope.mcVersion(version: String = extension("minecraft_version")): String {
-    return "com.mojang:minecraft:$version"
+    sourceSets {
+        create("testmod") {
+            compileClasspath += main.get().compileClasspath
+            compileClasspath += main.get().output
+
+            runtimeClasspath += main.get().runtimeClasspath
+        }
+    }
+
+    dependencies {
+        minecraft("com.mojang:minecraft:${property("minecraft_version")}")
+        mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
+        modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
+
+        modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
+        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
+
+        modApi("maven.modrinth:nucleus:${property("nucleus_version")}")
+    }
 }
 
-fun DependencyHandlerScope.yarn(version: String = extension("yarn_mappings")): String {
-    return "net.fabricmc:yarn:$version:v2"
-}
+tasks {
+    val applyVersion: ProcessResources.() -> Unit = {
+        inputs.property("version", project.version)
 
-fun DependencyHandlerScope.loader(version: String = extension("loader_version"), bundled: Boolean = false): Dependency? {
-    return optionallyBundled("net.fabricmc:fabric-loader:$version", bundled)
-}
+        filesMatching("fabric.mod.json") {
+            expand(mutableMapOf("version" to project.version))
+        }
+    }
 
-fun DependencyHandlerScope.fabricApi(version: String = extension("fabric_api_version"), bundled: Boolean = false): Dependency? {
-    return optionallyBundled("net.fabricmc.fabric-api:fabric-api:$version", bundled)
-}
+    named("processTestmodResources", applyVersion)
+    processResources(applyVersion)
 
-fun DependencyHandler.fabricKotlin(version: String = extension("fabric_kotlin_version"), bundled: Boolean = false): Dependency? {
-    return optionallyBundled("net.fabricmc:fabric-language-kotlin:$version", bundled)
-}
+    jar {
+        from("LICENSE")
+    }
 
-fun DependencyHandler.arrp(version: String = extension("arrp_version"), bundled: Boolean = true): Dependency? {
-    return optionallyBundled("net.devtech:arrp:$version", bundled)
-}
+    publishing {
+        publications {
+            create<MavenPublication>("mavenJava") {
+                val components = getComponents()
+                from(components["java"])
+            }
+        }
 
-fun DependencyHandler.patchouli(version: String = extension("patchouli_version"), bundled: Boolean = false): Dependency? {
-    return optionallyBundled("vazkii.patchouli:Patchouli:$version", bundled)
-}
+        // select the repositories you want to publish to
+        repositories {
+            // uncomment to publish to the local maven
+            // mavenLocal()
+            mavenLocal()
+        }
+    }
 
-fun DependencyHandler.libgui(version: String = extension("libgui_version"), bundled: Boolean = false): Dependency? {
-    return optionallyBundled("io.github.cottonmc:LibGui:$version", bundled)
-}
-
-fun DependencyHandler.nucleus(version: String = extension("nucleus_version"), bundled: Boolean = false): Dependency? {
-    return optionallyBundled("maven.modrinth:nucleus:$version", bundled, this::modApi)
-}
-
-fun DependencyHandler.rebornEnergy(version: String = extension("tech_reborn_energy_version"), bundled: Boolean = false): Dependency? {
-    return optionallyBundled("teamreborn:energy:$version", bundled, this::modApi)
-}
-
-fun DependencyHandler.dataTagLib(version: String = extension("data_tag_lib_version"), bundled: Boolean = false): Dependency? {
-    return optionallyBundled("com.github.NathanPB:KtDataTagLib:$version", bundled, this::modApi)
-}
-
-fun DependencyHandler.vorbis(version: String = extension("vorbis_version")): Dependency? {
-    return implementation("com.googlecode.soundlibs:vorbisspi:$version")
-}
-
-// END libraries
-
-plugins {
-    id("fabric-loom") version "0.10-SNAPSHOT"
-    kotlin("jvm") version "1.5.30"
-    kotlin("plugin.serialization") version "1.5.30"
-}
-
-base {
-    archivesName.set(extension("archives_base_name"))
-    version = extension("mod_version")
-    group = extension("maven_group")
-}
-
-repositories {
-    mavenCentral()
-
-    jitpack()
-    modmuss()
-    modrinth()
-    devan()
-}
-
-dependencies {
-    minecraft(mcVersion())
-    mappings(yarn())
-
-    loader()
-    fabricApi()
-    fabricKotlin()
-
-    arrp()
-    nucleus()
-
-    rebornEnergy()
+    compileKotlin {
+        kotlinOptions.jvmTarget = "16"
+    }
 }
 
 loom {
-    accessWidenerPath.set(file("src/main/resources/assemble.accesswidener"))
+    accessWidenerPath.set(File("$rootDir/src/main/resources/assemble.accesswidener"))
 
     runs {
-        create("serverTest") {
-            server()
-            source(sourceSets.main.get())
-            vmArg("-Dfabric-api.gametest=1")
+        create("testmodClient") {
+            inherit(getByName("client"))
+
+            configName = "Testmod Client"
+
+            source(sourceSets.getByName("testmod"))
+        }
+
+        create("testmodServer") {
+            inherit(getByName("server"))
+
+            configName = "Testmod Server"
+
+            source(sourceSets.getByName("testmod"))
         }
     }
 }
 
 java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
     withSourcesJar()
 }
 
-tasks {
-    "compileJava"(JavaCompile::class) {
-        options.encoding = "UTF-8"
-        options.release.set(16)
-    }
-
-    "compileKotlin"(KotlinCompile::class) {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_16.toString()
-        }
-    }
-
-    "processResources"(ProcessResources::class) {
-        // change ${version} in fabric.mod.json to match the one in gradle.properties
-        val version = extension("mod_version")
-        inputs.property("version", version)
-
-        filesMatching("fabric.mod.json") {
-            expand("version" to version)
-        }
-    }
-
-    "jar"(Jar::class) {
-        from("LICENSE") {
-            rename { "${it}_${base.archivesName.get()}"}
-        }
-    }
-}
+// configure the maven publication

@@ -2,29 +2,29 @@
 
 A dynamic recipe library to replace vanilla's.
 
-# Usage
+# Installation
 
-```gradle
-// build.gradle(.kts)
+### Repository
+
+```kotlin
 repositories {
-    // [...]
-
     maven {
         name = "Modrinth"
-        setUrl("https://api.modrinth.com/maven")
+        setUrl("https://api.modrinth.com/maven/")
+        
         content {
-            includeGroup("maven.modrinth")
+            includeGroup("maven,modrinth")
         }
     }
-
-    // [...]
 }
+```
 
+### Dependency
+
+Versions can be found on [the modrinth page](https://modrinth.com/mod/assemble/versions),
+
+```kotlin
 dependencies {
-    // [...]
-
-    modApi("maven.modrinth:assemble:${assemble_version}") // can be found from looking at the versions on the Modrinth page
-
-    // [...]
+    modApi("maven.modrinth:assemble:${assemble_version}")
 }
 ```

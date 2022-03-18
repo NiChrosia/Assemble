@@ -1,0 +1,39 @@
+{
+    "schemaVersion": 1,
+    "id": "assemble-testmod",
+    "version": "${version}",
+
+    "name": "Assemble Testmod",
+    "description": "Test module for Assemble.",
+    "authors": [
+        "NiChrosia"
+    ],
+    "contact": {
+        "homepage": "https://github.com/NiChrosia/Assemble",
+        "sources": "https://github.com/NiChrosia/Assemble"
+    },
+
+    "license": "CC0-1.0",
+
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            {
+                "adapter": "kotlin",
+                "value": "assemble.testmod.AssembleTest"
+            }
+        ]
+    },
+
+    "depends": {
+        "fabricloader": ">=0.8.7",
+        "fabric": ">=0.42.0",
+        "fabric-language-kotlin": "*",
+        "minecraft": ">=1.18",
+
+        "nucleus": ">=0.3"
+    },
+    "suggests": {
+        "flamingo": "*"
+    }
+}

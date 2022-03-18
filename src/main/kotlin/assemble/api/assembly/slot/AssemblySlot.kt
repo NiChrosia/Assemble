@@ -17,7 +17,7 @@ abstract class AssemblySlot<R, in I> internal constructor() {
         }
 
         /** Deserialize the given [json] into a valid slot. Type ambiguity is for the purpose of allowing shortcuts. */
-        abstract fun read(json: JsonElement): AssemblySlot<R, I>
+        abstract fun read(json: JsonElement): S
 
         abstract fun unpack(buffer: PacketByteBuf): S
         abstract fun pack(buffer: PacketByteBuf, slot: S)

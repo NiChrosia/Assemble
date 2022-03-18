@@ -22,11 +22,11 @@ interface InventoryAdapter : Inventory, ItemAdapter {
         return getStack(slot).maxCount
     }
 
-    override fun setItem(slot: Int, value: Item) {
+    override fun setItem(slot: Int, item: Item) {
         val count = getCount(slot)
         if (count == 0) return
 
-        val stack = ItemStack(value, count)
+        val stack = ItemStack(item, count)
 
         setStack(slot, stack)
     }

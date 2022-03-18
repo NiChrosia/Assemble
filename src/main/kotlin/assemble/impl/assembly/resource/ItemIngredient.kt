@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.tag.Tag
 
-class ItemIngredient(val items: List<Item> = listOf(), val nbt: NbtCompound = NbtCompound()) {
+class ItemIngredient(val items: List<Item> = emptyList(), val nbt: NbtCompound = NbtCompound()) {
     fun matches(item: Item): Boolean {
         return items.any { item == it }
     }

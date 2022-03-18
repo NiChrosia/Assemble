@@ -1,19 +1,19 @@
-package assemble.impl.assembly
+package assemble.impl.assembly.item
 
 import assemble.api.assembly.Assembly
 import assemble.impl.assembly.adapter.item.ItemAdapter
 import assemble.impl.assembly.slot.consume.IngredientConsumeSlot
-import assemble.impl.assembly.slot.craft.ItemCraftingSlot
+import assemble.impl.assembly.slot.craft.ItemCraftSlot
 import com.google.gson.JsonObject
 import net.minecraft.network.PacketByteBuf
 
 class Transmutation<I : ItemAdapter>(
     val ingredient: IngredientConsumeSlot,
-    val result: ItemCraftingSlot
+    val result: ItemCraftSlot
 ) : Assembly<I>(listOf(ingredient), listOf(result)) {
     class Type<I : ItemAdapter>(ingredientSlot: Int, resultSlot: Int) : Assembly.Type<I, Transmutation<I>>() {
         val ingredient = IngredientConsumeSlot.Type(ingredientSlot)
-        val result = ItemCraftingSlot.Type(resultSlot)
+        val result = ItemCraftSlot.Type(resultSlot)
         
         override fun read(json: JsonObject): Transmutation<I> {
             val ingredient = ingredient.read(json["ingredient"])

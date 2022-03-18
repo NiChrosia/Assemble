@@ -6,6 +6,7 @@ import assemble.impl.assembly.resource.ItemIngredient
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import com.mojang.serialization.JsonOps
 import net.minecraft.item.Item
 import net.minecraft.nbt.NbtCompound
@@ -45,9 +46,13 @@ open class IngredientConsumeSlot(override val resource: ItemIngredient, override
                 }
 
                 is JsonObject -> {
-                    val matching = json["matching"]?.asJsonArray?.let(::getMatching) ?: emptyList()
+                    val matching = when(json["matching"]) {
+                        is JsonArray -> getMatching(json["matching"].asJsonArray)
+                        is JsonPrimitive -> getMatchingValues(json["matching"].asString)
+                        else -> throw unrecognizedFormat()
+                    }
 
-                    val nbt = JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json["data"])
+                    val nbt = JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json["nbt"])
                     val compound = (nbt as? NbtCompound) ?: NbtCompound()
 
                     val quantity = json["count"]?.asInt ?: 1
@@ -90,25 +95,24 @@ open class IngredientConsumeSlot(override val resource: ItemIngredient, override
         }
 
         fun getMatching(json: JsonArray): List<Item> {
-            val matching = mutableListOf<Item>()
+            val strings = json.map(JsonElement::getAsString)
+            val values = strings.map(::getMatchingValues)
 
-            for (element in json) {
-                val string = element.asString
+            return values.flatten()
+        }
 
-                if (string.startsWith("#")) {
-                    val key = Identifier(string.substring(1))
-                    val tag = ServerTagManagerHolder.getTagManager().getTag(Registry.ITEM_KEY, key) { unrecognizedFormat() }
+        fun getMatchingValues(string: String): List<Item> {
+            return if (string.startsWith("#")) {
+                val key = Identifier(string.substring(1))
+                val tag = ServerTagManagerHolder.getTagManager().getTag(Registry.ITEM_KEY, key) { unrecognizedFormat() }
 
-                    matching.addAll(tag.values())
-                } else {
-                    val key = Identifier(string)
-                    val item = Registry.ITEM[key]
+                tag.values()
+            } else {
+                val key = Identifier(string)
+                val item = Registry.ITEM[key]
 
-                    matching.add(item)
-                }
+                listOf(item)
             }
-
-            return matching
         }
     }
 }

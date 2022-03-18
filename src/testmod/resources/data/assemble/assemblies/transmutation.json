@@ -1,0 +1,13 @@
+{
+    "type": "assemble:transmutation",
+    "ingredient": {
+        "matching": "#minecraft:logs",
+        "nbt": {
+            "Field": 1
+        },
+        "count": 2
+    },
+    "result": {
+        "item": "minecraft:charcoal"
+    }
+}

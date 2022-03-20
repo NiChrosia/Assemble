@@ -18,10 +18,6 @@ interface InventoryAdapter : Inventory, ItemAdapter {
         return getStack(slot).count
     }
 
-    override fun getMaxCount(slot: Int): Int {
-        return getStack(slot).maxCount
-    }
-
     override fun setItem(slot: Int, item: Item) {
         val count = getCount(slot)
         if (count == 0) return

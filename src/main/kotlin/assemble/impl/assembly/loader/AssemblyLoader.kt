@@ -46,4 +46,21 @@ class AssemblyLoader : SimpleSynchronousResourceReloadListener {
     fun <I, A : Assembly<I>> register(type: Assembly.Type<I, A>, assembly: A): A {
         return assemblies.registerEntry(type, assembly)
     }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <I, A : Assembly<I>, T : Assembly.Type<I, A>> assemblies(type: T): List<A> {
+        val assemblies = assemblies[type]
+
+        return assemblies as? List<A> ?: throw IllegalStateException("Given type has invalid assembly entries.") // which should be impossible
+    }
+
+    fun <I, A : Assembly<I>, T : Assembly.Type<I, A>> matchingAssemblies(type: T, inventory: I): List<A> {
+        val assemblies = assemblies(type)
+
+        return assemblies.filter { it.matches(inventory) }
+    }
+
+    fun <I, A : Assembly<I>, T : Assembly.Type<I, A>> firstMatching(type: T, inventory: I): A? {
+        return matchingAssemblies(type, inventory).firstOrNull()
+    }
 }

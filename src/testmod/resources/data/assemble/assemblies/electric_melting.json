@@ -1,0 +1,7 @@
+{
+    "type": "assemble:electric_melting",
+
+    "solid": "minecraft:cobblestone",
+    "liquid": "minecraft:lava",
+    "power": 10
+}

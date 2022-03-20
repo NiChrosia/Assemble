@@ -1,6 +1,6 @@
 package assemble.impl.assembly.slot.consume
 
-import assemble.api.assembly.slot.ConsumeSlot
+import assemble.api.assembly.slot.IngredientSlot
 import assemble.impl.assembly.adapter.item.ItemAdapter
 import assemble.impl.assembly.resource.ItemIngredient
 import com.google.gson.JsonArray
@@ -12,12 +12,13 @@ import net.minecraft.item.Item
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtOps
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.tag.ServerTagManagerHolder
+import net.minecraft.tag.TagKey
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryEntry
 
-open class IngredientConsumeSlot(override val resource: ItemIngredient, override val quantity: Int, val slot: Int) : ConsumeSlot<ItemIngredient, ItemAdapter>() {
-    override fun enoughIngredients(inventory: ItemAdapter): Boolean {
+class ItemIngredientSlot<I : ItemAdapter>(override val resource: ItemIngredient, override val quantity: Int, val slot: Int) : IngredientSlot<ItemIngredient, I>() {
+    override fun enoughIngredients(inventory: I): Boolean {
         val item = inventory.getItem(slot)
         val nbt = inventory.getNbt(slot)
         val count = inventory.getCount(slot)
@@ -29,27 +30,36 @@ open class IngredientConsumeSlot(override val resource: ItemIngredient, override
         return validType && correctNbt && enoughItems
     }
 
-    override fun consume(inventory: ItemAdapter) {
-        val count = inventory.getCount(slot)
-        inventory.setCount(slot, count - quantity)
+    override fun consume(inventory: I) {
+        inventory.subtractItems(slot, quantity)
     }
 
-    class Type(val slot: Int) : ConsumeSlot.Type<ItemIngredient, ItemAdapter, IngredientConsumeSlot>() {
-        override fun read(json: JsonElement): IngredientConsumeSlot {
+    class Type<I : ItemAdapter>(val slot: Int) : IngredientSlot.Type<ItemIngredient, I, ItemIngredientSlot<I>>() {
+        override fun read(json: JsonElement): ItemIngredientSlot<I> {
             return when(json) {
-                is JsonArray -> {
-                    val matching = getMatching(json)
+                is JsonPrimitive -> {
+                    if (json.isString) {
+                        val matching = getMatching(json.asString)
+                        val resource = ItemIngredient(matching)
 
+                        ItemIngredientSlot(resource, 1, slot)
+                    } else {
+                        throw unrecognizedFormat(json)
+                    }
+                }
+
+                is JsonArray -> {
+                    val matching = getAllMatching(json)
                     val resource = ItemIngredient(matching)
 
-                    IngredientConsumeSlot(resource, 1, slot)
+                    ItemIngredientSlot(resource, 1, slot)
                 }
 
                 is JsonObject -> {
                     val matching = when(json["matching"]) {
-                        is JsonArray -> getMatching(json["matching"].asJsonArray)
-                        is JsonPrimitive -> getMatchingValues(json["matching"].asString)
-                        else -> throw unrecognizedFormat()
+                        is JsonArray -> getAllMatching(json["matching"].asJsonArray)
+                        is JsonPrimitive -> getMatching(json["matching"].asString)
+                        else -> throw unrecognizedFormat(json)
                     }
 
                     val nbt = JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json["nbt"])
@@ -58,14 +68,14 @@ open class IngredientConsumeSlot(override val resource: ItemIngredient, override
                     val quantity = json["count"]?.asInt ?: 1
                     val resource = ItemIngredient(matching, compound)
 
-                    IngredientConsumeSlot(resource, quantity, slot)
+                    ItemIngredientSlot(resource, quantity, slot)
                 }
 
-                else -> throw unrecognizedFormat()
+                else -> throw unrecognizedFormat(json)
             }
         }
 
-        override fun unpack(buffer: PacketByteBuf): IngredientConsumeSlot {
+        override fun unpack(buffer: PacketByteBuf): ItemIngredientSlot<I> {
             val keysSize = buffer.readInt()
             val keys = mutableListOf<Identifier>()
 
@@ -79,10 +89,10 @@ open class IngredientConsumeSlot(override val resource: ItemIngredient, override
             val resource = ItemIngredient(items, nbt)
             val quantity = buffer.readInt()
 
-            return IngredientConsumeSlot(resource, quantity, slot)
+            return ItemIngredientSlot(resource, quantity, slot)
         }
 
-        override fun pack(buffer: PacketByteBuf, slot: IngredientConsumeSlot) {
+        override fun pack(buffer: PacketByteBuf, slot: ItemIngredientSlot<I>) {
             val keys = slot.resource.items.map(Registry.ITEM::getId)
             buffer.writeInt(keys.size)
 
@@ -94,19 +104,20 @@ open class IngredientConsumeSlot(override val resource: ItemIngredient, override
             buffer.writeInt(slot.quantity)
         }
 
-        fun getMatching(json: JsonArray): List<Item> {
+        fun getAllMatching(json: JsonArray): List<Item> {
             val strings = json.map(JsonElement::getAsString)
-            val values = strings.map(::getMatchingValues)
+            val values = strings.map(::getMatching)
 
             return values.flatten()
         }
 
-        fun getMatchingValues(string: String): List<Item> {
+        fun getMatching(string: String): List<Item> {
             return if (string.startsWith("#")) {
                 val key = Identifier(string.substring(1))
-                val tag = ServerTagManagerHolder.getTagManager().getTag(Registry.ITEM_KEY, key) { unrecognizedFormat() }
+                val tag = TagKey.of(Registry.ITEM_KEY, key)!!
+                val entries = Registry.ITEM.iterateEntries(tag)
 
-                tag.values()
+                entries.map(RegistryEntry<Item>::value)
             } else {
                 val key = Identifier(string)
                 val item = Registry.ITEM[key]

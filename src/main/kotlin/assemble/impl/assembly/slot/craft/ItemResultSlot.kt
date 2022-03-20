@@ -1,6 +1,6 @@
 package assemble.impl.assembly.slot.craft
 
-import assemble.api.assembly.slot.CraftSlot
+import assemble.api.assembly.slot.ResultSlot
 import assemble.impl.assembly.adapter.item.ItemAdapter
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -10,11 +10,11 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
-open class ItemCraftSlot(override val resource: Item, override val quantity: Int, val slot: Int) : CraftSlot<Item, ItemAdapter>() {
-    override fun spaceAvailable(inventory: ItemAdapter): Boolean {
+open class ItemResultSlot<I : ItemAdapter>(override val resource: Item, override val quantity: Int, val slot: Int) : ResultSlot<Item, I>() {
+    override fun spaceAvailable(inventory: I): Boolean {
         val item = inventory.getItem(slot)
         val count = inventory.getCount(slot)
-        val max = inventory.getMaxCount(slot)
+        val max = inventory.getItemCapacity(slot)
 
         val empty = count <= 0
         val sameType = item == resource
@@ -23,24 +23,22 @@ open class ItemCraftSlot(override val resource: Item, override val quantity: Int
         return empty || (sameType && hasSpace)
     }
 
-    override fun craft(inventory: ItemAdapter) {
-        val count = inventory.getCount(slot)
-
+    override fun craft(inventory: I) {
         inventory.setItem(slot, resource)
-        inventory.setCount(slot, count + quantity)
+        inventory.addItems(slot, quantity)
     }
 
-    class Type(val slot: Int) : CraftSlot.Type<Item, ItemAdapter, ItemCraftSlot>() {
-        override fun read(json: JsonElement): ItemCraftSlot {
+    class Type<I : ItemAdapter>(val slot: Int) : ResultSlot.Type<Item, I, ItemResultSlot<I>>() {
+        override fun read(json: JsonElement): ItemResultSlot<I> {
             return when(json) {
                 is JsonPrimitive -> {
                     if (json.isString) {
                         val key = Identifier(json.asString)
                         val item = Registry.ITEM[key]
 
-                        ItemCraftSlot(item, 1, slot)
+                        ItemResultSlot(item, 1, slot)
                     } else {
-                        throw unrecognizedFormat()
+                        throw unrecognizedFormat(json)
                     }
                 }
 
@@ -51,23 +49,23 @@ open class ItemCraftSlot(override val resource: Item, override val quantity: Int
 
                     val count = json["count"]?.asInt ?: 1
 
-                    ItemCraftSlot(item, count, slot)
+                    ItemResultSlot(item, count, slot)
                 }
 
-                else -> throw unrecognizedFormat()
+                else -> throw unrecognizedFormat(json)
             }
         }
 
-        override fun unpack(buffer: PacketByteBuf): ItemCraftSlot {
+        override fun unpack(buffer: PacketByteBuf): ItemResultSlot<I> {
             val key = buffer.readIdentifier()
             val item = Registry.ITEM[key]
 
             val count = buffer.readInt()
 
-            return ItemCraftSlot(item, count, slot)
+            return ItemResultSlot(item, count, slot)
         }
 
-        override fun pack(buffer: PacketByteBuf, slot: ItemCraftSlot) {
+        override fun pack(buffer: PacketByteBuf, slot: ItemResultSlot<I>) {
             val key = Registry.ITEM.getId(slot.resource)
             buffer.writeIdentifier(key)
 

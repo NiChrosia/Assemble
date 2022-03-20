@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage
 import net.minecraft.fluid.Fluid
 
 @Suppress("UnstableApiUsage")
-class SlottedFluidStorage(size: Int, capacity: Long) : CombinedStorage<FluidVariant, SingleFluidStorage>(
+class SlottedFluidStorage(size: Int, val capacity: Long) : CombinedStorage<FluidVariant, SingleFluidStorage>(
     Array(size) { SingleFluidStorage(capacity) }.toList()
 ), FluidAdapter {
     override fun getFluid(slot: Int): Fluid {
@@ -17,8 +17,8 @@ class SlottedFluidStorage(size: Int, capacity: Long) : CombinedStorage<FluidVari
         return parts[slot].amount
     }
 
-    override fun getMaxAmount(slot: Int): Long {
-        return parts[slot].capacity
+    override fun getFluidCapacity(slot: Int): Long {
+        return capacity
     }
 
     override fun setFluid(slot: Int, fluid: Fluid) {

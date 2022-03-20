@@ -1,6 +1,7 @@
 package assemble.impl.assembly.slot.consume
 
-import assemble.api.assembly.slot.ConsumeSlot
+import assemble.api.assembly.slot.IngredientSlot
+import assemble.impl.assembly.adapter.Adapters
 import assemble.impl.assembly.adapter.fluid.FluidAdapter
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -9,8 +10,8 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
-class FluidConsumeSlot(override val resource: Fluid, override val quantity: Int, val slot: Int) : ConsumeSlot<Fluid, FluidAdapter>() {
-    override fun enoughIngredients(inventory: FluidAdapter): Boolean {
+class FluidIngredientSlot<I : FluidAdapter>(override val resource: Fluid, override val quantity: Int, val slot: Int) : IngredientSlot<Fluid, I>() {
+    override fun enoughIngredients(inventory: I): Boolean {
         val fluid = inventory.getFluid(slot)
         val amount = inventory.getAmount(slot)
 
@@ -20,13 +21,12 @@ class FluidConsumeSlot(override val resource: Fluid, override val quantity: Int,
         return correctType && enoughFluid
     }
 
-    override fun consume(inventory: FluidAdapter) {
-        val amount = inventory.getAmount(slot)
-        inventory.setAmount(slot, amount - quantity)
+    override fun consume(inventory: I) {
+        inventory.subtractFluid(slot, quantity.toLong())
     }
 
-    class Type(val slot: Int) : ConsumeSlot.Type<Fluid, FluidAdapter, FluidConsumeSlot>() {
-        override fun read(json: JsonElement): FluidConsumeSlot {
+    class Type<I : FluidAdapter>(val slot: Int) : IngredientSlot.Type<Fluid, I, FluidIngredientSlot<I>>() {
+        override fun read(json: JsonElement): FluidIngredientSlot<I> {
             return when(json) {
                 is JsonObject -> {
                     val key = Identifier(json["fluid"].asString)
@@ -34,23 +34,23 @@ class FluidConsumeSlot(override val resource: Fluid, override val quantity: Int,
                     val resource = Registry.FLUID[key]
                     val quantity = json["amount"].asInt
 
-                    FluidConsumeSlot(resource, quantity, slot)
+                    FluidIngredientSlot(resource, quantity, slot)
                 }
 
-                else -> throw unrecognizedFormat()
+                else -> throw unrecognizedFormat(json)
             }
         }
 
-        override fun unpack(buffer: PacketByteBuf): FluidConsumeSlot {
+        override fun unpack(buffer: PacketByteBuf): FluidIngredientSlot<I> {
             val key = buffer.readIdentifier()
 
             val resource = Registry.FLUID[key]
             val quantity = buffer.readInt()
 
-            return FluidConsumeSlot(resource, quantity, slot)
+            return FluidIngredientSlot(resource, quantity, slot)
         }
 
-        override fun pack(buffer: PacketByteBuf, slot: FluidConsumeSlot) {
+        override fun pack(buffer: PacketByteBuf, slot: FluidIngredientSlot<I>) {
             val key = Registry.FLUID.getId(slot.resource)
 
             buffer.writeIdentifier(key)

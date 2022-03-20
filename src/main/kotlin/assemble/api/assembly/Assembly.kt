@@ -1,18 +1,18 @@
 package assemble.api.assembly
 
-import assemble.api.assembly.slot.ConsumeSlot
-import assemble.api.assembly.slot.CraftSlot
+import assemble.api.assembly.slot.IngredientSlot
+import assemble.api.assembly.slot.ResultSlot
 import com.google.gson.JsonObject
 import net.minecraft.network.PacketByteBuf
 
-abstract class Assembly<I>(val consumption: List<ConsumeSlot<*, I>>, val crafting: List<CraftSlot<*, I>>) {
+abstract class Assembly<I>(val ingredients: List<IngredientSlot<*, I>>, val results: List<ResultSlot<*, I>>) {
     open fun matches(inventory: I): Boolean {
-        return crafting.all { it.spaceAvailable(inventory) } && consumption.all { it.enoughIngredients(inventory) }
+        return ingredients.all { it.enoughIngredients(inventory) } && results.all { it.spaceAvailable(inventory) }
     }
 
     open fun craft(inventory: I) {
-        for (slot in crafting) slot.craft(inventory)
-        for (slot in consumption) slot.consume(inventory)
+        for (ingredient in ingredients) ingredient.consume(inventory)
+        for (result in results) result.craft(inventory)
     }
 
     abstract class Type<I, A : Assembly<I>> {
